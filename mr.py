@@ -16,11 +16,12 @@ for col in range (n):
     X[:,col+1] = X[:,col] + alpha*(tita-X[:,col])*dt + [0.27 * X[:,col]]*dB[:,col+1]
 
 R = X.transpose()
+Z1 = R[:,0:5]
 
 p.title('Mean Reversal Model')
 p.xlabel('Time,$t$',fontsize=16)
 p.ylabel('R(t)',fontsize=16)
-p.plot(T,R)
+p.plot(T,Z1)
 p.show()
 
 #expected value of R(1)

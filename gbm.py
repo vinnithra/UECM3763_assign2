@@ -12,18 +12,18 @@ print(Var_S3)
 
 #Create Brownian paths
 t = p.linspace(0,t,n+1);
-dB = p.randn(n_path, n+1)/p.sqrt(n); dB[:,0]=0;
+dB = p.randn(n_path, n+1)/p.sqrt(n/t); dB[:,0]=0;
 B = dB.cumsum(axis=1);
 
 #Calculate Stock Price
 nu = mu - sigma*sigma/2.0
 S = p.zeros_like(B); S[:,0]=S0
 S[:,1:]=S0*p.exp(nu*t[1:]+sigma*B[:,1:])
-print(S)
+S1 = S[0:5]
 p.title('Brownian Motion')
 p.xlabel('t',fontsize=16)
 p.ylabel('x',fontsize=16)
-p.plot(t,S.transpose());p.show;
+p.plot(t,S1.transpose());p.show;
 
 #to fing the expected value of s(3)
 Z=S.transpose()
@@ -45,7 +45,7 @@ total_square=0
 for i in range(5):
     total_square=total_square+C_square[i]
     
-Var_S3=(total_square-(expected_S3**2)/n_path)/(n_path-1)
+Var_S3=(total_square-(total**2)/n_path)/(n_path-1)
 
 msg2='Variance of S(3) based on the simulation is %.30f' %Var_S3
 print(msg2)
