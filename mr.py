@@ -1,42 +1,45 @@
 import pylab as p
+import numpy as np
 
-n_path = 5; n = n_partitions = 1000; t = 1.0;
-alpha = 1; tita = 0.064; X0 = 3.0;
+#Setup parameters
+alpha = 1 ; sigma=0.27; tita=0.064;R0=3;
+n_path=1000 ; n = n_partitions=1000;t=1.0;
 
-#To create the brownian motion
-dt=t/n; T = p.linspace(0,t,n+1)
-dB = p.randn(n_path, n+1)*p.sqrt(dt); dB[:,0]=0;
-B = dB.cumsum(axis=1);
-X = p.zeros_like(B)
+dt=t/n; T=p.linspace(0,t,n+1)
+dB=p.randn(n_path,n+1) * p.sqrt (dt); dB[:,0]=0;
+B=dB.cumsum(axis=1);
+R=p.zeros_like(B)
 
-X[:,0] = X0
 
-#the solution of the mean reversal
+R[:,0]=R0
 for col in range (n):
-    X[:,col+1] = X[:,col] + alpha*(tita-X[:,col])*dt + [0.27 * X[:,col]]*dB[:,col+1]
+    R[:,col+1] = R[:,col]+alpha*(tita-R[:,col])*dt+R[:,col]*0.27*dB[:,col]
 
-R = X.transpose()
-Z1 = R[:,0:5]
+#pick 5 path randomly
+R_random_row=np.random.randint(n_path,size=5)
+R1=R[R_random_row,:]
 
-p.title('Mean Reversal Model')
-p.xlabel('Time,$t$',fontsize=16)
+p.xlabel('time, $t$', fontsize=16)
 p.ylabel('R(t)',fontsize=16)
-p.plot(T,Z1)
-p.show()
+p.title('Mean Reversal Process' , fontsize=20)
+p.plot(T,R1.transpose());p.show();
 
-#expected value of R(1)
-R1 = R[-1,:]
-E = R1.sum() / n_path
-msg = 'The expected value of R(1) is %.13f' %E
-print(msg)
+Z=R.transpose()
+C=Z[-1,:]
+total = 0
+count=0
 
-# P[R(1)>2]
-count = 0
+for i in range (n_path):    
+    total=total +C[i]
+    
+expected_R1=total / n_path
+msg1='The expected value of R(1) is %.13f' %expected_R1
+print (msg1)
 
-for i in range (5):
-    if R1[i] > 2:
-        count = count + 1
+for i in range (n_path):
+    if C[i]>2:
+        count=count+1
         
-count2 = count / n_path
-msg = 'The probability that R(1) is more than 2 is %.13f' %count2
-print(msg)
+prob=count/n_path
+msg2='P(R(1)>2 is %.3f)' %prob
+print (msg2)
